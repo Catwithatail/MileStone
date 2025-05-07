@@ -40,6 +40,7 @@ header {
   color: #0a66c2;
   font-size: 18px;
   font-weight: bold;
+  cursor: pointer;
 }
 
 .warning-message {

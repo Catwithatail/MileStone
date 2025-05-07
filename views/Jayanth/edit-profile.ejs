@@ -1,153 +1,200 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Edit Admin Profile</title>
-  <link rel="stylesheet" href="/css/adminD/sidebar.css" />
-  <link rel="stylesheet" href="/css/adminD/profile.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Admin Profile</title>
+    <link rel="stylesheet" href="/css/adminD/sidebar.css" />
+    <link rel="stylesheet" href="/css/adminD/profile.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
     <div class="dashboard-wrapper">
-        <%- include('Partials/sidebar', { user: user, activeSection: 'job_listings' }) %>
-        <div class="main-content">
-            <div class="container">
-                <div class="header">
-                <h1>Edit Admin Profile</h1>
-                <a href="/adminD/profile" class="back-button">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="19" y1="12" x2="5" y2="12"></line>
-                    <polyline points="12 19 5 12 12 5"></polyline>
-                    </svg>
-                    Back to Profile
-                </a>
+      <%- include('Partials/sidebar', { user: user, activeSection: 'profile' })
+      %>
+      <div class="main-content">
+        <div class="container">
+          <div class="header">
+            <h1>Edit Admin Profile</h1>
+            <a href="/adminD/profile" class="back-button">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+              Back to Profile
+            </a>
+          </div>
+
+          <div class="edit-form-container">
+            <form id="profileEditForm">
+              <div class="form-section">
+                <h3 class="form-section-title">Basic Information</h3>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="name">Name</label>
+                    <input
+                      type="text"
+                      id="name"
+                      name="name"
+                      value="<%= user.name || '' %>"
+                    />
+                  </div>
                 </div>
 
-                <div class="edit-form-container">
-                <form id="profileEditForm">
-                    <div class="form-section">
-                    <h3 class="form-section-title">Basic Information</h3>
-
-
-                    <div class="form-row">
-                        <div class="form-group">
-                        <label for="name">Name</label>
-                        <input type="text" id="name" name="name" value="Admin User">
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                        <label for="location">Location</label>
-                        <input type="text" id="location" name="location" value="Mumbai, Maharashtra">
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                        <label for="picture">Profile Picture URL</label>
-                        <input type="url" id="picture" name="picture" value="https://via.placeholder.com/150" placeholder="Enter image URL">
-                        <small class="field-note">Enter a direct link to your profile image (e.g., https://via.placeholder.com/150)</small>
-                        </div>
-                    </div>
-                    </div>
-
-                    <div class="form-section">
-                    <h3 class="form-section-title">Contact Information</h3>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" name="email" value="admin@example.com">
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                        <label for="phone">Phone</label>
-                        <input type="text" id="phone" name="phone" value="+91 9876543210">
-                        </div>
-                    </div>
-                    </div>
-
-                    <div class="form-section">
-                    <h3 class="form-section-title">Social Media</h3>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                        <label for="linkedin">LinkedIn URL</label>
-                        <input type="url" id="linkedin" name="linkedin" value="https://linkedin.com/in/admin" placeholder="Enter LinkedIn URL">
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                        <label for="twitter">Twitter URL</label>
-                        <input type="url" id="twitter" name="twitter" value="https://twitter.com/admin" placeholder="Enter Twitter URL">
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                        <label for="facebook">Facebook URL</label>
-                        <input type="url" id="facebook" name="facebook" value="https://facebook.com/admin" placeholder="Enter Facebook URL">
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                        <label for="instagram">Instagram URL</label>
-                        <input type="url" id="instagram" name="instagram" value="https://instagram.com/admin" placeholder="Enter Instagram URL">
-                        </div>
-                    </div>
-                    </div>
-
-                    <div class="form-section">
-                    <h3 class="form-section-title">About Me</h3>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                        <label for="aboutMe">About</label>
-                        <textarea id="aboutMe" name="aboutMe" rows="6">I am an experienced administrator managing platform operations with a focus on user support and system efficiency. Passionate about ensuring a seamless experience for all users.</textarea>
-                        <small class="field-note">Separate paragraphs with a blank line</small>
-                        </div>
-                    </div>
-                    </div>
-
-                    <div class="form-section">
-                    <h3 class="form-section-title">Account Details</h3>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                        <label for="subscription">Subscription</label>
-                        <input type="text" id="subscription" name="subscription" value="Premium">
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                        <label for="role">Role</label>
-                        <select id="role" name="role">
-                            <option value="Employer">Employer</option>
-                            <option value="Freelancer">Freelancer</option>
-                            <option value="Admin" selected>Admin</option>
-                        </select>
-                        </div>
-                    </div>
-                    </div>
-
-                    <div class="form-actions">
-                    <a href="/adminD/profile" class="cancel-button">Cancel</a>
-                    <button type="submit" class="save-button">Save Changes</button>
-                    </div>
-                </form>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="location">Location</label>
+                    <input
+                      type="text"
+                      id="location"
+                      name="location"
+                      value="<%= user.location || '' %>"
+                    />
+                  </div>
                 </div>
-            </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="picture">Profile Picture URL</label>
+                    <input
+                      type="url"
+                      id="picture"
+                      name="picture"
+                      value="<%= user.picture || '' %>"
+                      placeholder="Enter image URL"
+                    />
+                    <small class="field-note"
+                      >Enter a direct link to your profile image (e.g.,
+                      https://via.placeholder.com/150)</small
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-section">
+                <h3 class="form-section-title">Contact Information</h3>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="email">Email</label>
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      value="<%= user.email || '' %>"
+                    />
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="phone">Phone</label>
+                    <input
+                      type="text"
+                      id="phone"
+                      name="phone"
+                      value="<%= user.phone || '' %>"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-section">
+                <h3 class="form-section-title">Social Media</h3>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="linkedin">LinkedIn URL</label>
+                    <input
+                      type="url"
+                      id="linkedin"
+                      name="linkedin"
+                      value="<%= user.socialMedia.linkedin || '' %>"
+                      placeholder="Enter LinkedIn URL"
+                    />
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="twitter">Twitter URL</label>
+                    <input
+                      type="url"
+                      id="twitter"
+                      name="twitter"
+                      value="<%= user.socialMedia.twitter || '' %>"
+                      placeholder="Enter Twitter URL"
+                    />
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="facebook">Facebook URL</label>
+                    <input
+                      type="url"
+                      id="facebook"
+                      name="facebook"
+                      value="<%= user.socialMedia.facebook || '' %>"
+                      placeholder="Enter Facebook URL"
+                    />
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="instagram">Instagram URL</label>
+                    <input
+                      type="url"
+                      id="instagram"
+                      name="instagram"
+                      value="<%= user.socialMedia.instagram || '' %>"
+                      placeholder="Enter Instagram URL"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-section">
+                <h3 class="form-section-title">About Me</h3>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="aboutMe">About</label>
+                    <textarea id="aboutMe" name="aboutMe" rows="6">
+<%= user.aboutMe || '' %></textarea
+                    >
+                    <small class="field-note"
+                      >Separate paragraphs with a blank line</small
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <a href="/adminD/profile" class="cancel-button">Cancel</a>
+                <button type="submit" class="save-button">Save Changes</button>
+              </div>
+            </form>
+          </div>
         </div>
+      </div>
     </div>
 
-  <script src="/js/adminD/edit-profile.js"></script>
-</body>
+    <script src="/js/adminD/edit-profile.js"></script>
+  </body>
 </html>

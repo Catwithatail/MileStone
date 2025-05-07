@@ -17,39 +17,88 @@
           />
         </svg>
       </div>
-      <div class="profile-name">Hey USER!</div>
+      <div class="profile-name">Hey <%=user.name%></div>
       <nav class="dashboard-nav">
         <ul>
           <li class="nav-item <%= activePage === 'home' ? 'active' : '' %>">
             <a href="/" class="nav-link">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24px" height="24px">
-                <path d="M 12 2.0996094 L 1 12 L 4 12 L 4 21 L 10 21 L 10 14 L 14 14 L 14 21 L 20 21 L 20 12 L 23 12 L 12 2.0996094 z"/>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                width="24px"
+                height="24px"
+              >
+                <path
+                  d="M 12 2.0996094 L 1 12 L 4 12 L 4 21 L 10 21 L 10 14 L 14 14 L 14 21 L 20 21 L 20 12 L 23 12 L 12 2.0996094 z"
+                />
               </svg>
               <span>Home</span>
             </a>
           </li>
           <li class="nav-item <%= activePage === 'profile' ? 'active' : '' %>">
             <a href="/freelancerD/profile" class="nav-link">
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="12" cy="7" r="4" stroke="<%= activePage === 'profile' ? 'currentColor' : 'black' %>" stroke-width="2" />
-                <path d="M4 21C4 17.6863 7.58172 15 12 15C16.4183 15 20 17.6863 20 21" stroke="<%= activePage === 'profile' ? 'currentColor' : 'black' %>" stroke-width="2" />
+              <svg
+                width="40"
+                height="40"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle
+                  cx="12"
+                  cy="7"
+                  r="4"
+                  stroke="<%= activePage === 'profile' ? 'currentColor' : 'black' %>"
+                  stroke-width="2"
+                />
+                <path
+                  d="M4 21C4 17.6863 7.58172 15 12 15C16.4183 15 20 17.6863 20 21"
+                  stroke="<%= activePage === 'profile' ? 'currentColor' : 'black' %>"
+                  stroke-width="2"
+                />
               </svg>
               <span>Profile</span>
             </a>
           </li>
-          <li class="nav-item <%= activePage === 'active_job' ? 'active' : '' %>">
+          <li
+            class="nav-item <%= activePage === 'active_job' ? 'active' : '' %>"
+          >
             <a href="/freelancerD/active_job" class="nav-link">
-              <svg data-name="Layer 1" width="22px" height="22px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="currentColor" stroke="currentColor" stroke-width="2">
-                <path d="M41.93 41.34H6.07a4.28 4.28 0 0 1-4.28-4.28V17.82a4.28 4.28 0 0 1 4.28-4.28h35.86a4.29 4.29 0 0 1 4.29 4.28v19.24a4.29 4.29 0 0 1-4.29 4.28zM6.07 15.54a2.28 2.28 0 0 0-2.28 2.28v19.24a2.28 2.28 0 0 0 2.28 2.28h35.86a2.29 2.29 0 0 0 2.29-2.28V17.82a2.29 2.29 0 0 0-2.29-2.28z" />
-                <path d="M34 14.54h-2v-2a3.93 3.93 0 0 0-4-3.88h-8a3.93 3.93 0 0 0-4 3.92v2h-2v-2a5.93 5.93 0 0 1 6-5.92h8a5.93 5.93 0 0 1 6 5.92zM19.64 26.88a1 1 0 0 1-.34-.06L2.43 20.77a1 1 0 1 1 .68-1.88L20 24.94a1 1 0 0 1-.33 1.94zM28.36 26.88a1 1 0 0 1-.36-1.94l16.86-6.05a1 1 0 1 1 .68 1.88L28.7 26.82a1 1 0 0 1-.34.06z" />
-                <path d="M27.91 32h-7.82a2.38 2.38 0 0 1-2.37-2.37v-2.46a2.37 2.37 0 0 1 2.37-2.37h7.82a2.37 2.37 0 0 1 2.37 2.37v2.48A2.38 2.38 0 0 1 27.91 32zm-7.82-5.2a.37.37 0 0 0-.37.37v2.48a.38.38 0 0 0 .37.37h7.82a.38.38 0 0 0 .37-.37v-2.48a.38.38 0 0 0-.37-.37z" />
+              <svg
+                data-name="Layer 1"
+                width="22px"
+                height="22px"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 48 48"
+                fill="currentColor"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M41.93 41.34H6.07a4.28 4.28 0 0 1-4.28-4.28V17.82a4.28 4.28 0 0 1 4.28-4.28h35.86a4.29 4.29 0 0 1 4.29 4.28v19.24a4.29 4.29 0 0 1-4.29 4.28zM6.07 15.54a2.28 2.28 0 0 0-2.28 2.28v19.24a2.28 2.28 0 0 0 2.28 2.28h35.86a2.29 2.29 0 0 0 2.29-2.28V17.82a2.29 2.29 0 0 0-2.29-2.28z"
+                />
+                <path
+                  d="M34 14.54h-2v-2a3.93 3.93 0 0 0-4-3.88h-8a3.93 3.93 0 0 0-4 3.92v2h-2v-2a5.93 5.93 0 0 1 6-5.92h8a5.93 5.93 0 0 1 6 5.92zM19.64 26.88a1 1 0 0 1-.34-.06L2.43 20.77a1 1 0 1 1 .68-1.88L20 24.94a1 1 0 0 1-.33 1.94zM28.36 26.88a1 1 0 0 1-.36-1.94l16.86-6.05a1 1 0 1 1 .68 1.88L28.7 26.82a1 1 0 0 1-.34.06z"
+                />
+                <path
+                  d="M27.91 32h-7.82a2.38 2.38 0 0 1-2.37-2.37v-2.46a2.37 2.37 0 0 1 2.37-2.37h7.82a2.37 2.37 0 0 1 2.37 2.37v2.48A2.38 2.38 0 0 1 27.91 32zm-7.82-5.2a.37.37 0 0 0-.37.37v2.48a.38.38 0 0 0 .37.37h7.82a.38.38 0 0 0 .37-.37v-2.48a.38.38 0 0 0-.37-.37z"
+                />
               </svg>
               <span>Active Jobs</span>
             </a>
           </li>
-          <li class="nav-item <%= activePage === 'job_history' ? 'active' : '' %>">
+          <li
+            class="nav-item <%= activePage === 'job_history' ? 'active' : '' %>"
+          >
             <a href="/freelancerD/job_history" class="nav-link">
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="<%= activePage === 'job_history' ? 'currentColor' : 'black' %>" stroke-width="2">
+              <svg
+                width="40"
+                height="40"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="<%= activePage === 'job_history' ? 'currentColor' : 'black' %>"
+                stroke-width="2"
+              >
                 <circle cx="12" cy="13" r="10" />
                 <path d="M12 6v6l4 2" />
               </svg>
@@ -58,28 +107,83 @@
           </li>
           <li class="nav-item <%= activePage === 'payment' ? 'active' : '' %>">
             <a href="/freelancerD/payment" class="nav-link">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="2" y="6" width="20" height="12" stroke="<%= activePage === 'payment' ? 'currentColor' : 'black' %>" stroke-width="2" />
-                <line x1="2" y1="10" x2="22" y2="10" stroke="<%= activePage === 'payment' ? 'currentColor' : 'black' %>" stroke-width="2" />
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect
+                  x="2"
+                  y="6"
+                  width="20"
+                  height="12"
+                  stroke="<%= activePage === 'payment' ? 'currentColor' : 'black' %>"
+                  stroke-width="2"
+                />
+                <line
+                  x1="2"
+                  y1="10"
+                  x2="22"
+                  y2="10"
+                  stroke="<%= activePage === 'payment' ? 'currentColor' : 'black' %>"
+                  stroke-width="2"
+                />
                 <rect x="4" y="14" width="4" height="2" fill="black" />
               </svg>
               <span>Payments</span>
             </a>
           </li>
-          <li class="nav-item <%= activePage === 'skills_badges' ? 'active' : '' %>">
+          <li
+            class="nav-item <%= activePage === 'skills_badges' ? 'active' : '' %>"
+          >
             <a href="/freelancerD/skills_badges" class="nav-link">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="12" cy="8" r="4" stroke="<%= activePage === 'skills_badges' ? 'currentColor' : 'black' %>" stroke-width="2" />
-                <path d="M8 14L6 22L12 18L18 22L16 14" stroke="<%= activePage === 'skills_badges' ? 'currentColor' : 'black' %>" stroke-width="2" />
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle
+                  cx="12"
+                  cy="8"
+                  r="4"
+                  stroke="<%= activePage === 'skills_badges' ? 'currentColor' : 'black' %>"
+                  stroke-width="2"
+                />
+                <path
+                  d="M8 14L6 22L12 18L18 22L16 14"
+                  stroke="<%= activePage === 'skills_badges' ? 'currentColor' : 'black' %>"
+                  stroke-width="2"
+                />
               </svg>
               <span>Skills & Badges</span>
             </a>
           </li>
-          <li class="nav-item <%= activePage === 'subscription' ? 'active' : '' %>">
+          <li
+            class="nav-item <%= activePage === 'subscription' ? 'active' : '' %>"
+          >
             <a href="/freelancerD/subscription" class="nav-link">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M4 16h16l-1 4H5l-1-4z" stroke="<%= activePage === 'subscription' ? 'currentColor' : 'black' %>" stroke-width="2" />
-                <path d="M4 10l4 4h8l4-4-4-4-4 4-4-4-4 4z" stroke="<%= activePage === 'subscription' ? 'currentColor' : 'black' %>" stroke-width="2" stroke-linejoin="round" />
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M4 16h16l-1 4H5l-1-4z"
+                  stroke="<%= activePage === 'subscription' ? 'currentColor' : 'black' %>"
+                  stroke-width="2"
+                />
+                <path
+                  d="M4 10l4 4h8l4-4-4-4-4 4-4-4-4 4z"
+                  stroke="<%= activePage === 'subscription' ? 'currentColor' : 'black' %>"
+                  stroke-width="2"
+                  stroke-linejoin="round"
+                />
               </svg>
               <span>Subscription</span>
             </a>

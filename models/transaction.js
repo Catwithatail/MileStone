@@ -42,15 +42,7 @@ const transactionSchema = new Schema({
     enum: ['pending', 'paid', 'failed', 'refunded'],
     default: 'pending' 
   },
-  createdDate: { 
-    type: Date,
-    default: Date.now 
-  },
   paidDate: { 
-    type: Date,
-    default: null 
-  },
-  dueDate: { 
     type: Date,
     default: null 
   }

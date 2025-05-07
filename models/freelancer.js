@@ -21,8 +21,11 @@ const freelancerSchema = new Schema(
     },
     skills: [
       {
-        SkillId: String,
-        default: [],
+        skillId: {
+          type: String,
+          ref: "Skill",
+          required: true,
+        },
       },
     ],
     experience: [

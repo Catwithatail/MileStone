@@ -9,7 +9,8 @@
   </head>
   <body>
     <div class="dashboard-wrapper">
-      <%- include('Partials/sidebar', { user: user, activeSection: 'job_listings' }) %>
+      <%- include('Partials/sidebar', { user: user, activeSection:
+      'job_listings' }) %>
       <div class="main-content">
         <section id="job_listings" class="section-content active">
           <h1>Job Listings</h1>
@@ -56,20 +57,29 @@
               </button>
             </form>
           </div>
+          <div class="filter-buttons">
+            <button class="filter-btn" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="open">Open</button>
+            <button class="filter-btn" data-filter="closed">Closed</button>
+          </div>
           <div class="jobs-container">
-            <div class="job-card">
+            <% jobs.forEach(job => { %>
+            <div class="job-card" data-status="<%= job.status %>">
               <div class="job-card-left">
                 <div class="company-logo">
-                  <img src="/assets/company_logo.jpg" alt="Company Logo" />
+                  <img
+                    src="<%= job.imageUrl || '/assets/company_logo.jpg' %>"
+                    alt="Company Logo"
+                  />
                 </div>
               </div>
               <div class="job-card-center">
-                <h3 class="job-title">Senior Frontend Developer</h3>
-                <p class="job-salary">₹800-1700</p>
+                <h3 class="job-title"><%= job.title %></h3>
+                <p class="job-salary"><%= job.formattedBudget %></p>
                 <div class="job-tags">
-                  <span class="job-tag">React</span>
-                  <span class="job-tag">TypeScript</span>
-                  <span class="job-tag">NextJS</span>
+                  <% job.description.skills.slice(0, 3).forEach(skill => { %>
+                  <span class="job-tag"><%= skill %></span>
+                  <% }) %>
                 </div>
                 <div class="job-details">
                   <span class="job-location">
@@ -87,7 +97,7 @@
                       />
                       <circle cx="12" cy="9" r="2" />
                     </svg>
-                    Bangalore
+                    <%= job.location || 'Remote' %>
                     <span class="status-dot green"></span>
                   </span>
                   <span class="job-type">
@@ -103,7 +113,7 @@
                       <rect x="3" y="4" width="18" height="14" rx="2" ry="2" />
                       <line x1="3" y1="8" x2="21" y2="8" />
                     </svg>
-                    Full-time
+                    <%= job.jobType %>
                     <span class="status-dot green"></span>
                   </span>
                   <span class="job-date">
@@ -119,26 +129,47 @@
                       <circle cx="12" cy="12" r="10" />
                       <path d="M12 6V12L16 14" />
                     </svg>
-                    Posted 2 days ago
+                    Posted <%= job.formattedDate %>
                     <span class="status-dot green"></span>
                   </span>
                 </div>
               </div>
               <div class="job-card-right">
                 <div class="applicants-badge">
-                  45 applicants
+                  <%= job.applications?.length || 0 %> applicants
                 </div>
-                <a
-                  href="/AdminD/job_listings/see_more/1"
-                  class="btn-see-more"
+                <a href="/jobs/<%= job.jobId %>" class="btn-see-more"
                   >See More</a
                 >
               </div>
             </div>
+            <% }) %>
           </div>
         </section>
       </div>
     </div>
     <script src="/js/adminD/job_listings.js"></script>
+    <script>
+      document.querySelectorAll(".filter-btn").forEach((button) => {
+        button.addEventListener("click", () => {
+          document
+            .querySelectorAll(".filter-btn")
+            .forEach((btn) => btn.classList.remove("active"));
+          button.classList.add("active");
+
+          const filter = button.getAttribute("data-filter");
+          document.querySelectorAll(".job-card").forEach((card) => {
+            if (
+              filter === "all" ||
+              card.getAttribute("data-status") === filter
+            ) {
+              card.classList.remove("hidden");
+            } else {
+              card.classList.add("hidden");
+            }
+          });
+        });
+      });
+    </script>
   </body>
 </html>

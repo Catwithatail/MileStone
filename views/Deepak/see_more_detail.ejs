@@ -9,14 +9,13 @@
   <body>
     <div class="container">
       <header>
-        <a href="/jobs" class="back-button">Back</a>
+        <button onclick="history.back()" class="back-button" style="border: none; outline: none;">Back</button>
         <div class="logo">Job Details</div>
         <div>
-          <% if (user && user.role === 'Employer' && user.roleId ===
-          job.employerId) { %>
-          <a href="/employerD/job_listings/edit/<%= job.jobId %>"
-            ><button class="edit-button">Edit</button></a
-          >
+          <% if (user && user.role === 'Employer' && user.roleId === job.employerId) { %>
+          <a href="/employerD/job_listings/edit/<%= job.jobId %>">
+            <button class="edit-button">Edit</button>
+          </a>
           <% } %>
         </div>
       </header>
@@ -25,91 +24,48 @@
         <div class="job-title-section">
           <div class="job-title-info">
             <div class="deadline">
-              Application Deadline: <%= new
-              Date(job.applicationDeadline).toLocaleDateString('en-US', { month:
-              'long', day: 'numeric', year: 'numeric' }) %>
+              Application Deadline: <%= new Date(job.applicationDeadline).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %>
             </div>
             <h1 class="job-title"><%= job.title %></h1>
-            <div class="company-name">TechSolutions Inc.</div>
+            <div class="company-name"><%= companyName %></div>
             <div class="job-meta">
               <div class="meta-item">
-                <svg
-                  width="16"
-                  height="16"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"
-                  />
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
                 </svg>
-                <%= job.location || 'Not specified' %> <%= job.remote ?
-                '(Remote)' : '' %>
+                <%= job.location || 'Not specified' %> <%= job.remote ? '(Remote)' : '' %>
               </div>
               <div class="meta-item">
-                <svg
-                  width="16"
-                  height="16"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    d="M20 6h-3V4c0-1.11-.89-2-2-2H9c-1.11 0-2 .89-2 2v2H4c-1.11 0-2 .89-2 2v11c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zM9 4h6v2H9V4zm11 15H4v-2h16v2zm0-5H4V8h3v2h2V8h6v2h2V8h3v6z"
-                  />
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M20 6h-3V4c0-1.11-.89-2-2-2H9c-1.11 0-2 .89-2 2v2H4c-1.11 0-2 .89-2 2v11c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zM9 4h6v2H9V4zm11 15H4v-2h16v2zm0-5H4V8h3v2h2V8h6v2h2V8h3v6z" />
                 </svg>
                 <%= job.jobType %>
               </div>
               <div class="meta-item">
-                <svg
-                  width="16"
-                  height="16"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M5 13h14v-2H5v2zm-2 4h14v-2H3v2zm4-8h14V7H7v2z" />
                 </svg>
                 <%= job.experienceLevel %> Level
               </div>
               <div class="meta-item">
-                <svg
-                  width="16"
-                  height="16"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    d="M11 17h2v-1h1c.55 0 1-.45 1-1v-3c0-.55-.45-1-1-1h-3v-1h4V8h-2V7h-2v1h-1c-.55 0-1 .45-1 1v3c0 .55.45 1 1 1h3v1H9v2h2v1zm9-13H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4V6h16v12z"
-                  />
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M11 17h2v-1h1c.55 0 1-.45 1-1v-3c0-.55-.45-1-1-1h-3v-1h4V8h-2V7h-2v1h-1c-.55 0-1 .45-1 1v3c0 .55.45 1 1 1h3v1H9v2h2v1zm9-13H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4V6h16v12z" />
                 </svg>
-                ₹<%= job.budget.amount.toLocaleString() %> paid <%=
-                job.budget.period %>
+                ₹<%= job.budget.amount.toLocaleString() %> paid <%= job.budget.period %>
               </div>
               <div class="meta-item">
-                <svg
-                  width="16"
-                  height="16"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm-.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"
-                  />
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm-.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z" />
                 </svg>
-                Posted on <%= new
-                Date(job.postedDate).toLocaleDateString('en-US', { month:
-                'long', day: 'numeric', year: 'numeric' }) %>
+                Posted on <%= new Date(job.postedDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %>
               </div>
             </div>
             <div class="job-actions">
-              <% if (user) { %> <% if (user.role === 'Freelancer') { %>
+              <% if (user) { %>
+              <% if (user.role === 'Freelancer') { %>
               <a href="/jobs/apply/<%= job.jobId %>">
                 <button class="apply-button">
-                  <svg
-                    width="16"
-                    height="16"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                  >
+                  <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
                   </svg>
                   Apply Now
@@ -117,15 +73,11 @@
               </a>
               <% } else { %>
               <p class="warning-message">Only Freelancers can apply to jobs.</p>
-              <% } %> <% } else { %>
+              <% } %>
+              <% } else { %>
               <a href="/login">
                 <button class="apply-button">
-                  <svg
-                    width="16"
-                    height="16"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                  >
+                  <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
                   </svg>
                   Apply Now
@@ -144,8 +96,7 @@
         <div class="section-title">Job Description</div>
         <div class="description-text">
           <p><%= job.description.text %></p>
-          <% if (job.description.responsibilities &&
-          job.description.responsibilities.length > 0) { %>
+          <% if (job.description.responsibilities && job.description.responsibilities.length > 0) { %>
           <br />
           <p><strong>Responsibilities:</strong></p>
           <ul>
@@ -153,8 +104,8 @@
             <li><%= responsibility %></li>
             <% }); %>
           </ul>
-          <% } %> <% if (job.description.requirements &&
-          job.description.requirements.length > 0) { %>
+          <% } %>
+          <% if (job.description.requirements && job.description.requirements.length > 0) { %>
           <br />
           <p><strong>Requirements:</strong></p>
           <ul>
@@ -162,8 +113,8 @@
             <li><%= requirement %></li>
             <% }); %>
           </ul>
-          <% } %> <% if (job.description.skills && job.description.skills.length
-          > 0) { %>
+          <% } %>
+          <% if (job.description.skills && job.description.skills.length > 0) { %>
           <div class="skills-required">
             <div class="skills-title">Technical Skills:</div>
             <div class="skills-tags">
@@ -187,14 +138,15 @@
             </tr>
           </thead>
           <tbody id="milestones-tbody">
-            <% if (job.milestones && job.milestones.length > 0) { %> <%
-            job.milestones.forEach(milestone => { %>
+            <% if (job.milestones && job.milestones.length > 0) { %>
+            <% job.milestones.forEach(milestone => { %>
             <tr>
               <td><%= milestone.description %></td>
               <td><%= milestone.deadline %></td>
               <td class="payment-column"><%= milestone.payment %></td>
             </tr>
-            <% }); %> <% } else { %>
+            <% }); %>
+            <% } else { %>
             <tr>
               <td colspan="3">No milestones defined for this project.</td>
             </tr>

@@ -1,6 +1,7 @@
 const db = require("../database");
 const JobListing = require("../models/job_listing");
 const JobApplication = require("../models/job_application");
+const Employer = require("../models/employer"); // Add this to fetch employer details
 
 exports.getHome = (req, res) => {
   let dashboardRoute = "";
@@ -77,6 +78,14 @@ exports.getJobDetails = async (req, res) => {
       return res.status(404).send("Job not found. Please select a job from the listings.");
     }
 
+    // Fetch the employer details using the employerId from the job
+    const employer = await Employer.findOne({ employerId: job.employerId }).lean();
+    console.log("Fetched employer:", employer);
+
+    if (!employer) {
+      return res.status(404).send("Employer not found for this job.");
+    }
+
     let dashboardRoute = "";
     if (req.session.user) {
       switch (req.session.user.role) {
@@ -96,6 +105,7 @@ exports.getJobDetails = async (req, res) => {
       user: req.session.user || null,
       dashboardRoute,
       job,
+      companyName: employer.companyName || "Not specified", // Pass the company name
     });
   } catch (error) {
     console.error("Error loading job details:", error);
