@@ -187,7 +187,7 @@ const employerController = {
           description: m.description,
           deadline: m.deadline,
           payment: m.payment,
-          status: "pending",
+          status: "not-paid",
         })),
       });
 
