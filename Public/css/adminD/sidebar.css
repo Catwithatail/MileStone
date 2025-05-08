@@ -280,3 +280,12 @@ body {
     min-height: auto;
   }
 }
+
+.sidebar-menu-item.quizzes .sidebar-menu-icon svg {
+  stroke: currentColor;
+}
+
+.sidebar-menu-item.quizzes.active .sidebar-menu-icon svg,
+.sidebar-menu-item.quizzes:hover .sidebar-menu-icon svg {
+  stroke: #fff;
+}

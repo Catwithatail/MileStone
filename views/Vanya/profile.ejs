@@ -159,9 +159,13 @@
               <div class="skills-section">
                 <h3 class="section-title">Skills</h3>
                 <div class="skills-list" id="skillsDisplay">
-                  <% (user.skills || []).forEach(skill => { %>
-                  <span class="skill-tag"><%= skill.SkillId %></span>
-                  <% }) %>
+                  <% if (user.skills && user.skills.length > 0) { %>
+                    <% user.skills.forEach(skill => { %>
+                      <span class="skill-tag"><%= skill %></span>
+                    <% }) %>
+                  <% } else { %>
+                    <p>No skills added yet.</p>
+                  <% } %>
                 </div>
               </div>
 

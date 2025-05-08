@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Skill Quiz - <%= skill.name %></title>
+    <link
+      rel="stylesheet"
+      href="/css/FreelancerD/static_elements/sidebar.css"
+    />
+    <link rel="stylesheet" href="/css/FreelancerD/quiz_style.css" />
+  </head>
+  <body>
+    <div class="dashboard-wrapper">
+      <!-- Sidebar -->
+      <%- include('./partials/sidebar', {activePage: 'skills_badges'}) %>
+
+      <!-- Main Content Area -->
+      <div class="main-content">
+        <div id="quiz" class="content-section active">
+          <div class="header">
+            <h2>Quiz: <%= skill.name %></h2>
+            <p>Test your knowledge to earn this skill for your profile.</p>
+          </div>
+
+          <div class="quiz-container">
+            <form id="quiz-form">
+              <% skill.questions.forEach((question, index) => { %>
+                <div class="question-card">
+                  <h4>Question <%= index + 1 %> (<%= question.marks %> marks)</h4>
+                  <p><%= question.questionText %></p>
+                  <div class="options">
+                    <% question.options.forEach((option, optIndex) => { %>
+                      <label class="option">
+                        <input
+                          type="radio"
+                          name="<%= question.questionId %>"
+                          value="<%= option %>"
+                          required
+                        />
+                        <span><%= String.fromCharCode(65 + optIndex) %>. <%= option %></span>
+                      </label>
+                    <% }) %>
+                  </div>
+                </div>
+              <% }) %>
+              <button type="submit" class="submit-quiz-btn">Submit Quiz</button>
+            </form>
+          </div>
+
+          <!-- Result Popup -->
+          <div id="result-popup" class="popup" style="display: none;">
+            <div class="popup-content">
+              <h3 id="result-title"></h3>
+              <p id="result-message"></p>
+              <p id="result-score"></p>
+              <button id="result-close-btn" class="popup-btn">Done</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const skillId = '<%= skill.skillId %>'; // Ensure skillId is properly rendered
+      console.log('Skill ID:', skillId); // Debug log
+
+      document.getElementById('quiz-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        // Collect answers from the form
+        const formData = new FormData(e.target);
+        const answers = {};
+        for (let [key, value] of formData.entries()) {
+          answers[key] = value;
+        }
+
+        console.log('Answers:', answers); // Debug log
+
+        try {
+          const response = await fetch(`/freelancerD/skills_badges/quiz/${skillId}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(answers),
+          });
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+
+          const result = await response.json();
+
+          if (result.success) {
+            const popup = document.getElementById('result-popup');
+            const title = document.getElementById('result-title');
+            const message = document.getElementById('result-message');
+            const score = document.getElementById('result-score');
+
+            title.textContent = result.passed ? 'Congratulations!' : 'Try Again!';
+            message.textContent = result.message;
+            score.textContent = `Your Score: ${result.score}%`;
+
+            popup.style.display = 'flex';
+
+            document.getElementById('result-close-btn').addEventListener('click', () => {
+              window.location.href = '/freelancerD/skills_badges';
+            });
+          } else {
+            alert('Error: ' + result.error);
+          }
+        } catch (error) {
+          console.error('Error submitting quiz:', error);
+          alert('Failed to submit quiz. Please try again.');
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -23,6 +23,7 @@
             <h2>Skills & Badges</h2>
             <p>
               Earn badges by completing tasks and showcasing your expertise.
+              Take quizzes to add new skills to your profile.
             </p>
           </div>
 
@@ -31,30 +32,35 @@
             <section class="skills-section">
               <h4>Your Skills</h4>
               <div class="skills-list">
-                <span class="skill-tag">HTML5</span>
-                <span class="skill-tag">CSS3</span>
-                <span class="skill-tag">JavaScript</span>
-                <span class="skill-tag">React</span>
-                <span class="skill-tag">TypeScript</span>
-                <span class="skill-tag">Angular</span>
-                <span class="skill-tag">Node.js</span>
-                <span class="skill-tag">Git</span>
+                <% if (freelancerSkills && freelancerSkills.length > 0) { %> <%
+                freelancerSkills.forEach(skill => { %>
+                <span class="skill-tag"><%= skill %></span>
+                <% }) %> <% } else { %>
+                <p>No skills acquired yet. Take a quiz to add skills!</p>
+                <% } %>
               </div>
               <div class="add-skill">
-                <h5>Add a New Skill</h5>
-                <form id="add-skill-form">
-                  <div class="form-group">
-                    <label for="new-skill">Skill Name</label>
-                    <input
-                      type="text"
-                      id="new-skill"
-                      name="new-skill"
-                      placeholder="Enter skill name"
-                      required
-                    />
+                <h5>Available Skills</h5>
+                <div class="skills-list available-skills">
+                  <% skills.forEach(skill => { %>
+                  <div class="skill-item">
+                    <span
+                      class="skill-tag <%= skill.isAcquired ? 'acquired' : '' %>"
+                    >
+                      <%= skill.name %> <% if (skill.isAcquired) { %>
+                      <span class="acquired-check">✔</span>
+                      <% } %>
+                    </span>
+                    <% if (skill.hasQuiz && !skill.isAcquired) { %>
+                    <a
+                      href="skills_badges/quiz/<%= skill.skillId %>"
+                      class="take-quiz-btn"
+                      >Take Quiz</a
+                    >
+                    <% } %>
                   </div>
-                  <button type="submit" class="add-skill-btn">Add Skill</button>
-                </form>
+                  <% }) %>
+                </div>
               </div>
             </section>
 
@@ -63,52 +69,32 @@
               <h4>Your Badges</h4>
               <div class="badges-grid">
                 <div class="badge-item">
-                  <img src="/assets/portfolio/topfreelancer_badge.png" alt="Top Freelancer" />
+                  <img
+                    src="/assets/portfolio/topfreelancer_badge.png"
+                    alt="Top Freelancer"
+                  />
                   <h5>Top Freelancer</h5>
                   <p>Earned for completing 50+ projects with a 4.5+ rating</p>
                   <span class="badge-date">Earned: Jan 2025</span>
                 </div>
                 <div class="badge-item">
-                  <img src="/assets/portfolio/risingstar_badge.png" alt="Rising Star" />
+                  <img
+                    src="/assets/portfolio/risingstar_badge.png"
+                    alt="Rising Star"
+                  />
                   <h5>Rising Star</h5>
                   <p>Earned for completing 10 projects within first 3 months</p>
                   <span class="badge-date">Earned: Aug 2024</span>
                 </div>
                 <div class="badge-item">
-                  <img src="/assets/portfolio/codemaster_badge.png" alt="Code Master" />
+                  <img
+                    src="/assets/portfolio/codemaster_badge.png"
+                    alt="Code Master"
+                  />
                   <h5>Code Master</h5>
                   <p>Earned for expertise in 5+ programming languages</p>
                   <span class="badge-date">Earned: Nov 2024</span>
                 </div>
-              </div>
-            </section>
-
-            <!-- Badge Progress -->
-            <section class="badge-progress-section">
-              <h4>Badge Progress</h4>
-              <div class="badge-progress-item">
-                <h5>Client Favorite</h5>
-                <p>Receive 20 five-star reviews</p>
-                <div class="progress-bar">
-                  <div class="progress" style="width: 90%"></div>
-                </div>
-                <span class="progress-status">18/20</span>
-              </div>
-              <div class="badge-progress-item">
-                <h5>Project Titan</h5>
-                <p>Complete 100 projects</p>
-                <div class="progress-bar">
-                  <div class="progress" style="width: 50%"></div>
-                </div>
-                <span class="progress-status">50/100</span>
-              </div>
-              <div class="badge-progress-item">
-                <h5>Speedy Deliverer</h5>
-                <p>Deliver 10 projects ahead of schedule</p>
-                <div class="progress-bar">
-                  <div class="progress" style="width: 70%"></div>
-                </div>
-                <span class="progress-status">7/10</span>
               </div>
             </section>
           </div>

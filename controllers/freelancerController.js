@@ -3,6 +3,7 @@ const JobListing = require("../models/job_listing");
 const User = require("../models/user");
 const Employer = require("../models/employer");
 const Freelancer = require("../models/freelancer");
+const Skill = require("../models/skill");
 
 exports.getFreelancerActiveJobs = async (req, res) => {
   try {
@@ -12,16 +13,13 @@ exports.getFreelancerActiveJobs = async (req, res) => {
 
     const freelancerId = req.session.user.roleId;
 
-    // Query MongoDB for active jobs where user is assigned and status is working
     const activeJobs = await JobListing.find({
       "assignedFreelancer.freelancerId": freelancerId,
       "assignedFreelancer.status": "working",
     }).lean();
 
-    // Fetch employer details for company names and format jobs
     const formattedJobs = await Promise.all(
       activeJobs.map(async (job) => {
-        // Calculate sum of paid milestones
         const paidAmount = job.milestones
           .filter((milestone) => milestone.status === "paid")
           .reduce(
@@ -29,12 +27,10 @@ exports.getFreelancerActiveJobs = async (req, res) => {
             0
           );
 
-        // Calculate milestone progress as a percentage
         const totalBudget = parseFloat(job.budget.amount) || 0;
         const progress =
           totalBudget > 0 ? Math.min((paidAmount / totalBudget) * 100, 100) : 0;
 
-        // Fetch employer company name
         const employer = await Employer.findOne({
           employerId: job.employerId,
         }).lean();
@@ -51,7 +47,7 @@ exports.getFreelancerActiveJobs = async (req, res) => {
           price: job.budget.amount
             ? `Rs.${parseFloat(job.budget.amount).toFixed(2)}`
             : "Not specified",
-          progress: Math.round(progress), // Round the progress to an integer
+          progress: Math.round(progress),
           tech: job.description.skills || [],
         };
       })
@@ -77,10 +73,9 @@ exports.leaveActiveJob = async (req, res) => {
     const freelancerId = req.session.user.roleId;
     const jobId = req.params.jobId;
 
-    // Update job status to left using jobId instead of _id
     const result = await JobListing.updateOne(
       {
-        jobId: jobId, // Use jobId (UUID) instead of _id (ObjectId)
+        jobId: jobId,
         "assignedFreelancer.freelancerId": freelancerId,
         "assignedFreelancer.status": "working",
       },
@@ -111,34 +106,37 @@ exports.getFreelancerProfile = async (req, res) => {
       throw new Error("User ID or Freelancer roleId not found in session");
     }
 
-    // Fetch user data
     const user = await User.findOne({ userId }).lean();
     if (!user) {
       throw new Error("User not found");
     }
 
-    // Fetch freelancer data
     const freelancer = await Freelancer.findOne({ freelancerId }).lean();
     if (!freelancer) {
       throw new Error("Freelancer profile not found");
     }
 
+    // Fetch skill names based on skillIds in freelancer.skills
+    const skillIds = (freelancer.skills || []).map(skill => skill.skillId);
+    const skills = await Skill.find({ skillId: { $in: skillIds } }).lean();
+    const skillNames = skills.map(skill => skill.name);
+
     await res.render("Vanya/profile", {
       user: {
-      name: user.name,
-      email: user.email,
-      phone: user.phone,
-      picture: user.picture, // Fallback to a working public image
-      location: user.location,
-      socialMedia: user.socialMedia,
-      aboutMe: user.aboutMe,
-      subscription: user.subscription,
-      role: user.role,
-      skills: freelancer.skills || [],
-      experience: freelancer.experience || [],
-      education: freelancer.education || [],
-      portfolio: freelancer.portfolio || [],
-      resume: freelancer.resume || "",
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        picture: user.picture,
+        location: user.location,
+        socialMedia: user.socialMedia,
+        aboutMe: user.aboutMe,
+        subscription: user.subscription,
+        role: user.role,
+        skills: skillNames, // Pass skill names instead of raw skill objects
+        experience: freelancer.experience || [],
+        education: freelancer.education || [],
+        portfolio: freelancer.portfolio || [],
+        resume: freelancer.resume || "",
       },
       activePage: "profile",
     });
@@ -156,13 +154,11 @@ exports.getEditFreelancerProfile = async (req, res) => {
 
     const freelancerId = req.session.user.roleId;
 
-    // Fetch user data
     const user = await User.findOne({ roleId: freelancerId }).lean();
     if (!user) {
       return res.status(404).send("User not found");
     }
 
-    // Fetch freelancer data
     const freelancer = await Freelancer.findOne({
       freelancerId: freelancerId,
     }).lean();
@@ -170,7 +166,6 @@ exports.getEditFreelancerProfile = async (req, res) => {
       return res.status(404).send("Freelancer profile not found");
     }
 
-    // Combine user and freelancer data
     const profileData = {
       ...user,
       ...freelancer,
@@ -208,7 +203,6 @@ exports.updateFreelancerProfile = async (req, res) => {
       skills,
     } = req.body;
 
-    // Update User model
     const userUpdate = await User.updateOne(
       { roleId: freelancerId },
       {
@@ -227,7 +221,6 @@ exports.updateFreelancerProfile = async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    // Parse arrays if they are strings (in case they are sent as JSON strings)
     const parsedExperience =
       typeof experience === "string" ? JSON.parse(experience) : experience;
     const parsedEducation =
@@ -237,7 +230,6 @@ exports.updateFreelancerProfile = async (req, res) => {
     const parsedSkills =
       typeof skills === "string" ? JSON.parse(skills) : skills;
 
-    // Update Freelancer model
     const freelancerUpdate = await Freelancer.updateOne(
       { freelancerId: freelancerId },
       {
@@ -270,16 +262,13 @@ exports.getFreelancerJobHistory = async (req, res) => {
 
     const freelancerId = req.session.user.roleId;
 
-    // Query MongoDB for finished or left jobs
     const historyJobs = await JobListing.find({
       "assignedFreelancer.freelancerId": freelancerId,
       "assignedFreelancer.status": { $in: ["finished", "left"] },
     }).lean();
 
-    // Fetch employer details for company names
     const formattedJobs = await Promise.all(
       historyJobs.map(async (job) => {
-        // Calculate sum of paid milestones
         const paidAmount = job.milestones
           .filter((milestone) => milestone.status === "paid")
           .reduce(
@@ -287,7 +276,6 @@ exports.getFreelancerJobHistory = async (req, res) => {
             0
           );
 
-        // Fetch employer company name
         const employer = await Employer.findOne({
           employerId: job.employerId,
         }).lean();
@@ -308,7 +296,7 @@ exports.getFreelancerJobHistory = async (req, res) => {
             job.updatedAt ? job.updatedAt.toLocaleDateString() : "Unknown"
           }`,
           price: paidAmount ? `Rs.${paidAmount.toFixed(2)}` : "Not paid",
-          rating: job.rating || 0, // Adjust if you have a rating field
+          rating: job.rating || 0,
         };
       })
     );
@@ -338,8 +326,39 @@ exports.getFreelancerPayment = async (req, res) => {
 
 exports.getFreelancerSkills = async (req, res) => {
   try {
+    if (!req.session.user) {
+      return res.status(401).send("Unauthorized: Please log in");
+    }
+
+    const freelancerId = req.session.user.roleId;
+
+    // Fetch freelancer's skills
+    const freelancer = await Freelancer.findOne({ freelancerId }).lean();
+    if (!freelancer) {
+      return res.status(404).send("Freelancer profile not found");
+    }
+
+    // Fetch all skills from the database
+    const allSkills = await Skill.find().lean();
+
+    // Fetch skill names for freelancer's skills
+    const freelancerSkillIds = freelancer.skills.map((skill) => skill.skillId);
+    const freelancerSkills = await Skill.find({
+      skillId: { $in: freelancerSkillIds },
+    }).lean();
+
+    // Map all skills with quiz availability
+    const skillsData = allSkills.map((skill) => ({
+      skillId: skill.skillId,
+      name: skill.name,
+      hasQuiz: skill.questions && skill.questions.length > 0,
+      isAcquired: freelancerSkillIds.includes(skill.skillId),
+    }));
+
     res.render("Vanya/skills_badges", {
-      user: req.session.user || staticUser,
+      user: req.session.user,
+      skills: skillsData,
+      freelancerSkills: freelancerSkills.map((skill) => skill.name),
       activePage: "skills_badges",
     });
   } catch (error) {
@@ -357,5 +376,90 @@ exports.getFreelancerSubscription = async (req, res) => {
   } catch (error) {
     console.error("Error rendering subscription:", error.message);
     res.status(500).send("Server Error: Unable to render subscription page");
+  }
+};
+
+exports.getSkillQuiz = async (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.status(401).send("Unauthorized: Please log in");
+    }
+
+    const skillId = req.params.skillId;
+    const skill = await Skill.findOne({ skillId }).lean();
+
+    if (!skill) {
+      return res.status(404).send("Skill not found");
+    }
+
+    if (!skill.questions || skill.questions.length === 0) {
+      return res.status(400).send("No quiz available for this skill");
+    }
+
+    res.render("Vanya/quiz", {
+      user: req.session.user,
+      skill: {
+        skillId: skill.skillId,
+        name: skill.name,
+        questions: skill.questions,
+      },
+      activePage: "skills_badges",
+    });
+  } catch (error) {
+    console.error("Error rendering quiz:", error.message);
+    res.status(500).send("Server Error: Unable to render quiz page");
+  }
+};
+
+exports.submitSkillQuiz = async (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.status(401).json({ error: "Unauthorized: Please log in" });
+    }
+
+    const skillId = req.params.skillId;
+    const freelancerId = req.session.user.roleId;
+    const answers = req.body;
+
+    console.log('Skill ID:', skillId);
+    console.log('Freelancer ID:', freelancerId);
+    console.log('Submitted Answers:', answers);
+
+    const skill = await Skill.findOne({ skillId }).lean();
+    if (!skill || !skill.questions || skill.questions.length === 0) {
+      return res.status(404).json({ error: "Skill or quiz not found" });
+    }
+
+    let totalMarks = 0;
+    let earnedMarks = 0;
+
+    skill.questions.forEach((question) => {
+      const userAnswer = answers[question.questionId];
+      totalMarks += question.marks;
+
+      if (userAnswer && userAnswer === question.correctAnswer) {
+        earnedMarks += question.marks;
+      }
+    });
+
+    const scorePercentage = (earnedMarks / totalMarks) * 100;
+    const passed = scorePercentage >= 80;
+
+    if (passed) {
+      await Freelancer.updateOne(
+        { freelancerId },
+        { $addToSet: { skills: { skillId } } }
+      );
+    }
+
+    res.json({
+      success: true,
+      passed,
+      message: passed ? "Well Done!" : "Better Luck Next Time!",
+      score: Math.round(scorePercentage),
+    });
+  } catch (error) {
+    console.error("Error submitting quiz:", error.message);
+    res.status(500).json({ error: "Server Error: Unable to submit quiz" });
   }
 };

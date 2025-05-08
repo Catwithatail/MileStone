@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add New Skill Quiz</title>
+    <link rel="stylesheet" href="/css/adminD/sidebar.css" />
+    <link rel="stylesheet" href="/css/adminD/add-quiz.css" />
+    <style></style>
+  </head>
+  <body>
+    <div class="dashboard-wrapper">
+      <%- include('Partials/sidebar', { user: user, activeSection: 'quizzes' }) %>
+      <div class="main-content">
+        <section id="add-quiz" class="section-content active">
+          <div class="section-title">
+            <h1>Add New Skill Quiz</h1>
+            <a href="/adminD/quizzes" class="back-link">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path d="M19 12H5M12 19l-7-7 7-7" />
+              </svg>
+              Back to Quizzes
+            </a>
+          </div>
+
+          <div class="form-container">
+            <form id="quiz-form" method="POST" action="/adminD/quizzes/add">
+              <div class="form-group">
+                <label for="skill-name">Skill Name</label>
+                <input
+                  type="text"
+                  id="skill-name"
+                  name="name"
+                  class="form-control"
+                  required
+                  placeholder="Enter skill name (e.g. JavaScript, Python, React)"
+                />
+              </div>
+
+              <div class="questions-container" id="questions-container">
+                <!-- Question cards will be added here -->
+              </div>
+
+              <button
+                type="button"
+                class="btn-add-question"
+                id="add-question-btn"
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Add Question
+              </button>
+
+              <input
+                type="hidden"
+                id="questions-json"
+                name="questions"
+                value="[]"
+              />
+
+              <button type="submit" class="btn-submit">
+                Create Skill Quiz
+              </button>
+            </form>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const questionsContainer = document.getElementById("questions-container");
+        const addQuestionBtn = document.getElementById("add-question-btn");
+        const questionsJsonInput = document.getElementById("questions-json");
+
+        let questions = [];
+
+        function updateQuestionsJson() {
+          questionsJsonInput.value = JSON.stringify(questions);
+        }
+
+        function createQuestionCard(questionIndex, questionData = null) {
+          const questionCard = document.createElement("div");
+          questionCard.className = "question-card";
+          questionCard.dataset.index = questionIndex;
+
+          const questionText = questionData ? questionData.questionText : "";
+          const marks = questionData ? questionData.marks : 1;
+          const correctAnswer = questionData ? questionData.correctAnswer : "";
+
+          questionCard.innerHTML = `
+            <button type="button" class="delete-question" onclick="deleteQuestion(${questionIndex})">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+            <div class="question-header">
+              <h4>Question ${questionIndex + 1}</h4>
+              <div class="marks-label">
+                Marks:
+                <input type="number" class="marks-input" value="${marks}" min="1" 
+                  oninput="updateQuestionMarks(${questionIndex}, this.value)">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Question Text</label>
+              <input type="text" class="form-control question-text" value="${questionText}" 
+                placeholder="Enter your question" oninput="updateQuestionText(${questionIndex}, this.value)" required>
+            </div>
+            <div class="options-container">
+              <!-- Options will be added here -->
+            </div>
+            <div class="form-group">
+              <label for="correct-answer-${questionIndex}">Correct Answer</label>
+              <select class="correct-answer-select" id="correct-answer-${questionIndex}" 
+                onchange="setCorrectAnswer(${questionIndex}, this.value)">
+                <option value="">Select correct answer</option>
+              </select>
+            </div>
+            <div class="error-message" id="error-message-${questionIndex}">
+              Please select a valid correct answer for this question.
+            </div>
+            <button type="button" class="btn-add-option" onclick="addOption(${questionIndex})">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              Add Option
+            </button>
+          `;
+
+          questionsContainer.appendChild(questionCard);
+
+          const optionsContainer = questionCard.querySelector(".options-container");
+          const correctAnswerSelect = questionCard.querySelector(`#correct-answer-${questionIndex}`);
+
+          if (!questionData) {
+            questions[questionIndex] = {
+              questionText: "",
+              options: [],
+              correctAnswer: "",
+              marks: 1,
+            };
+            for (let i = 0; i < 4; i++) {
+              addOptionToDOM(optionsContainer, questionIndex, i, "", correctAnswerSelect);
+            }
+          } else {
+            questionData.options.forEach((option, optionIndex) => {
+              addOptionToDOM(optionsContainer, questionIndex, optionIndex, option, correctAnswerSelect);
+            });
+            // Set the correct answer in the dropdown
+            const correctOptionIndex = questionData.options.indexOf(correctAnswer);
+            if (correctOptionIndex !== -1) {
+              const correctAlphabet = String.fromCharCode(65 + correctOptionIndex); // A, B, C, etc.
+              correctAnswerSelect.value = correctAlphabet;
+            }
+          }
+
+          updateQuestionsJson();
+        }
+
+        function addOptionToDOM(container, questionIndex, optionIndex, optionText = "", correctAnswerSelect) {
+          const optionGroup = document.createElement("div");
+          optionGroup.className = "option-group";
+          optionGroup.dataset.optionIndex = optionIndex;
+
+          const optionLabel = String.fromCharCode(65 + optionIndex); // A, B, C, etc.
+
+          optionGroup.innerHTML = `
+            <span class="option-label">${optionLabel}</span>
+            <input type="text" class="option-input" value="${optionText}" 
+              placeholder="Option ${optionLabel}" 
+              oninput="updateOptionText(${questionIndex}, ${optionIndex}, this.value)" required>
+          `;
+
+          container.appendChild(optionGroup);
+
+          // Add option to the correct answer dropdown
+          const optionElement = document.createElement("option");
+          optionElement.value = optionLabel;
+          optionElement.textContent = optionLabel;
+          correctAnswerSelect.appendChild(optionElement);
+
+          if (!questions[questionIndex].options[optionIndex]) {
+            questions[questionIndex].options[optionIndex] = optionText;
+          }
+
+          updateQuestionsJson();
+        }
+
+        createQuestionCard(0);
+
+        addQuestionBtn.addEventListener("click", function () {
+          createQuestionCard(questions.length);
+        });
+
+        document.getElementById("quiz-form").addEventListener("submit", function (e) {
+          let hasError = false;
+
+          // Update questions array with current input values before validation
+          questions.forEach((question, index) => {
+            const questionCard = document.querySelector(`.question-card[data-index="${index}"]`);
+            const questionTextInput = questionCard.querySelector(".question-text");
+            const marksInput = questionCard.querySelector(".marks-input");
+            const optionInputs = questionCard.querySelectorAll(".option-input");
+            const correctAnswerSelect = questionCard.querySelector(`#correct-answer-${index}`);
+
+            question.questionText = questionTextInput.value.trim();
+            question.marks = parseInt(marksInput.value) || 1;
+            question.options = Array.from(optionInputs).map(input => input.value.trim());
+
+            const selectedAlphabet = correctAnswerSelect.value;
+            if (selectedAlphabet) {
+              const optionIndex = selectedAlphabet.charCodeAt(0) - 65; // Convert A, B, C to 0, 1, 2
+              question.correctAnswer = question.options[optionIndex] || "";
+            } else {
+              question.correctAnswer = "";
+            }
+          });
+
+          for (let i = 0; i < questions.length; i++) {
+            const question = questions[i];
+            const errorMessage = document.getElementById(`error-message-${i}`);
+
+            if (!question.questionText) {
+              e.preventDefault();
+              alert(`Please enter the question text for Question ${i + 1}.`);
+              hasError = true;
+              break;
+            }
+            if (question.options.length < 2) {
+              e.preventDefault();
+              alert(`Question ${i + 1} must have at least 2 options.`);
+              hasError = true;
+              break;
+            }
+            if (!question.options.some(opt => opt.trim())) {
+              e.preventDefault();
+              alert(`Please fill in at least one option for Question ${i + 1}.`);
+              hasError = true;
+              break;
+            }
+            if (!question.correctAnswer || !question.correctAnswer.trim()) {
+              e.preventDefault();
+              errorMessage.style.display = "block";
+              hasError = true;
+              setTimeout(() => {
+                errorMessage.style.display = "none";
+              }, 3000);
+            } else {
+              errorMessage.style.display = "none";
+            }
+          }
+
+          if (!hasError) {
+            updateQuestionsJson();
+          } else {
+            e.preventDefault();
+          }
+        });
+      });
+
+      function updateQuestionText(questionIndex, value) {
+        questions[questionIndex].questionText = value.trim();
+        updateQuestionsJson();
+      }
+
+      function updateQuestionMarks(questionIndex, value) {
+        questions[questionIndex].marks = parseInt(value) || 1;
+        updateQuestionsJson();
+      }
+
+      function updateOptionText(questionIndex, optionIndex, value) {
+        const previousValue = questions[questionIndex].options[optionIndex];
+        questions[questionIndex].options[optionIndex] = value.trim();
+        if (questions[questionIndex].correctAnswer === previousValue) {
+          questions[questionIndex].correctAnswer = value.trim();
+        }
+        updateQuestionsJson();
+      }
+
+      function setCorrectAnswer(questionIndex, alphabet) {
+        const errorMessage = document.getElementById(`error-message-${questionIndex}`);
+        if (!alphabet) {
+          questions[questionIndex].correctAnswer = "";
+          errorMessage.style.display = "block";
+          setTimeout(() => {
+            errorMessage.style.display = "none";
+          }, 3000);
+          updateQuestionsJson();
+          return;
+        }
+
+        const optionIndex = alphabet.charCodeAt(0) - 65; // Convert A, B, C to 0, 1, 2
+        const optionValue = questions[questionIndex].options[optionIndex];
+
+        if (!optionValue || !optionValue.trim()) {
+          alert("Please fill in the option before selecting it as the correct answer.");
+          const select = document.getElementById(`correct-answer-${questionIndex}`);
+          select.value = "";
+          questions[questionIndex].correctAnswer = "";
+          errorMessage.style.display = "block";
+          setTimeout(() => {
+            errorMessage.style.display = "none";
+          }, 3000);
+        } else {
+          questions[questionIndex].correctAnswer = optionValue;
+          errorMessage.style.display = "none";
+        }
+        updateQuestionsJson();
+      }
+
+      function addOption(questionIndex) {
+        const questionCard = document.querySelector(`.question-card[data-index="${questionIndex}"]`);
+        const optionsContainer = questionCard.querySelector(".options-container");
+        const correctAnswerSelect = questionCard.querySelector(`#correct-answer-${questionIndex}`);
+        const nextOptionIndex = questions[questionIndex].options.length;
+
+        addOptionToDOM(optionsContainer, questionIndex, nextOptionIndex, "", correctAnswerSelect);
+        updateQuestionsJson();
+      }
+
+      function deleteQuestion(questionIndex) {
+        if (confirm("Are you sure you want to delete this question?")) {
+          const questionCard = document.querySelector(`.question-card[data-index="${questionIndex}"]`);
+          questionCard.remove();
+
+          questions.splice(questionIndex, 1);
+
+          const remainingQuestions = document.querySelectorAll(".question-card");
+          remainingQuestions.forEach((card, index) => {
+            card.dataset.index = index;
+            card.querySelector("h4").textContent = `Question ${index + 1}`;
+
+            const deleteBtn = card.querySelector(".delete-question");
+            deleteBtn.setAttribute("onclick", `deleteQuestion(${index})`);
+
+            const addOptionBtn = card.querySelector(".btn-add-option");
+            addOptionBtn.setAttribute("onclick", `addOption(${index})`);
+
+            const questionTextInput = card.querySelector(".question-text");
+            questionTextInput.setAttribute("oninput", `updateQuestionText(${index}, this.value)`);
+
+            const marksInput = card.querySelector(".marks-input");
+            marksInput.setAttribute("oninput", `updateQuestionMarks(${index}, this.value)`);
+
+            const optionGroups = card.querySelectorAll(".option-group");
+            optionGroups.forEach((group, optionIndex) => {
+              const optionInput = group.querySelector(".option-input");
+              optionInput.setAttribute("oninput", `updateOptionText(${index}, ${optionIndex}, this.value)`);
+            });
+
+            const correctAnswerSelect = card.querySelector(".correct-answer-select");
+            correctAnswerSelect.id = `correct-answer-${index}`;
+            correctAnswerSelect.setAttribute("onchange", `setCorrectAnswer(${index}, this.value)`);
+
+            const errorMessage = card.querySelector(".error-message");
+            errorMessage.id = `error-message-${index}`;
+          });
+
+          updateQuestionsJson();
+        }
+      }
+    </script>
+  </body>
+</html>
